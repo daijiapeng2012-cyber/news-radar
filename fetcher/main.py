@@ -110,26 +110,60 @@ def google_news_rss(domain: str) -> str:
 
 def parse_rss(xml_text: str) -> list:
     """解析 RSS XML，返回 [{title, url, summary, pub_time, pub_hours_ago}]"""
+    # 预处理：去掉命名空间前缀避免 find 失败
+    xml_clean = re.sub(r'<(\/?)[a-zA-Z]+:([a-zA-Z])', r'<\1\2', xml_text)
     try:
-        root = ET.fromstring(xml_text)
-    except ET.ParseError as e:
-        raise RuntimeError(f"RSS 解析失败: {e}") from e
+        root = ET.fromstring(xml_clean)
+    except ET.ParseError:
+        try:
+            root = ET.fromstring(xml_text)
+        except ET.ParseError as e:
+            raise RuntimeError(f"RSS 解析失败: {e}") from e
 
     # 兼容 RSS 2.0 和 Atom
     ns = {"atom": "http://www.w3.org/2005/Atom"}
-    items = root.findall(".//item") or root.findall(".//atom:entry", ns)
+    items = root.findall(".//item") or root.findall(".//atom:entry", ns) or root.findall(".//entry")
     now = datetime.now(timezone.utc)
     results = []
 
-    for item in items:
-        def get(tag, alt=None):
-            el = item.find(tag) or (item.find(alt) if alt else None)
-            return el.text.strip() if el is not None and el.text else ""
+    def get_text(item, *tags):
+        """安全获取元素文本，修复 ElementTree 元素真值判断 bug"""
+        for tag in tags:
+            el = item.find(tag)
+            if el is not None:  # 必须用 is not None，不能用 bool(el)
+                text = (el.text or "").strip()
+                if text:
+                    return text
+                # 有些 RSS 把内容放在子元素里
+                for child in el:
+                    if child.text and child.text.strip():
+                        return child.text.strip()
+        return ""
 
-        title = get("title")
-        url = get("link") or get("guid")
-        summary = get("description") or get("summary") or get("content")
-        pub_str = get("pubDate") or get("published") or get("updated")
+    def get_attr(item, tag, attr):
+        el = item.find(tag)
+        if el is not None:
+            return el.get(attr, "")
+        return ""
+
+    for item in items:
+        title = get_text(item, "title")
+        # link 可能是属性（Atom）或文本（RSS）
+        url = get_text(item, "link", "guid")
+        if not url:
+            url = get_attr(item, "link", "href")
+        summary = get_text(item, "description", "summary", "content")
+        pub_str = get_text(item, "pubDate", "published", "updated", "date")
+
+        # 正则兜底：直接从原始 XML 片段提取（应对奇葩格式）
+        if not url:
+            m = re.search(r'<link[^>]*>(https?://[^<]+)</link>', xml_text)
+            if m:
+                url = m.group(1).strip()
+        if not pub_str:
+            m = re.search(r'<pubDate[^>]*>([^<]+)</pubDate>', xml_text)
+            if m:
+                pub_str = m.group(1).strip()
 
         # 清理 HTML 标签
         summary = re.sub(r"<[^>]+>", "", summary) if summary else ""
@@ -141,16 +175,24 @@ def parse_rss(xml_text: str) -> list:
             continue
 
         # 解析发布时间
-        pub_hours_ago = 24.0  # 默认 24h 前
+        pub_hours_ago = 1.0  # 默认 1h 前（保守估计，确保不被过滤）
         pub_time_iso = ""
         if pub_str:
             try:
                 pub_dt = parsedate_to_datetime(pub_str)
                 pub_dt = pub_dt.astimezone(timezone.utc)
-                pub_hours_ago = (now - pub_dt).total_seconds() / 3600
+                pub_hours_ago = max(0.0, (now - pub_dt).total_seconds() / 3600)
                 pub_time_iso = pub_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
             except Exception:
-                pass
+                try:
+                    # 尝试 ISO 格式
+                    from datetime import datetime as dt
+                    pub_dt = dt.fromisoformat(pub_str.replace('Z', '+00:00'))
+                    pub_dt = pub_dt.astimezone(timezone.utc)
+                    pub_hours_ago = max(0.0, (now - pub_dt).total_seconds() / 3600)
+                    pub_time_iso = pub_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+                except Exception:
+                    pass
 
         # 过滤时效窗口外
         if pub_hours_ago > TIME_WINDOW_HOURS:
@@ -165,6 +207,7 @@ def parse_rss(xml_text: str) -> list:
         })
 
     return results
+
 
 
 import re  # 需要在模块级别导入
