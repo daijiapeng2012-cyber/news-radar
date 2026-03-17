@@ -36,6 +36,8 @@ RUN_LOG_FILE = os.path.join(DATA_DIR, "run_log.json")
 
 NOTION_TOKEN = os.environ.get("NOTION_TOKEN", "")
 NOTION_NEWS_DB = os.environ.get("NOTION_NEWS_DB", "0bbda71b549c4007ac53834a7633fee6")
+DEBUG_MODE = os.environ.get("DEBUG_MODE", "false").lower() == "true"
+FORCE_WRITE = os.environ.get("FORCE_WRITE", "false").lower() == "true"
 
 # 最大写入条数
 MAX_WRITE = 15
@@ -174,6 +176,10 @@ import re  # 需要在模块级别导入
 def run():
     print(f"\n{'='*60}")
     print(f"新闻雷达 · 开始抓取 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    if DEBUG_MODE:
+        print("⚠️  调试模式：不写入 Notion")
+    if FORCE_WRITE:
+        print("⚡ 强制写入模式：忽略去重")
     print(f"{'='*60}")
 
     # 加载配置
@@ -182,8 +188,8 @@ def run():
     feed_status = load_json(FEED_STATUS_FILE, {})
     existing_news = load_json(NEWS_JSON, [])
 
-    # 已存在的去重 key 集合
-    existing_keys = {
+    # 已存在的去重 key 集合（强制写入时清空）
+    existing_keys = set() if FORCE_WRITE else {
         make_dedup_key(n.get("title", ""), n.get("source", ""))
         for n in existing_news
     }
@@ -315,7 +321,7 @@ def run():
 
     # 写入 Notion（只写新文章，上限 MAX_WRITE 条）
     to_write = new_articles[:MAX_WRITE]
-    if writer and to_write:
+    if writer and to_write and not DEBUG_MODE:
         print(f"\n📝 写入 Notion（{len(to_write)} 条）...")
         for art in to_write:
             action = writer.upsert_article(art)
