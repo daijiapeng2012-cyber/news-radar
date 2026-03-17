@@ -44,7 +44,7 @@ MAX_WRITE = 15
 # 最小写入条数
 MIN_WRITE = 3
 # 文章时效窗口（小时）
-TIME_WINDOW_HOURS = 48
+TIME_WINDOW_HOURS = 168  # 7天
 # 连续失败阈值 → 本次跳过
 FAIL_THRESHOLD = 3
 # 评分精选阈值
@@ -420,4 +420,5 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         os.environ["NOTION_NEWS_DB"] = sys.argv[2]
     status = run()
+    # ZeroWrite（抓到文章但没有新条目）不算失败
     sys.exit(0 if status in ("Success", "ZeroWrite") else 1)
