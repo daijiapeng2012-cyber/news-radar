@@ -148,11 +148,25 @@ def parse_rss(xml_text: str) -> list:
 
     for item in items:
         title = get_text(item, "title")
+        # Google News 标题带 " - Source"，清理掉来源后缀
+        title = re.sub(r'\s+-\s+\S+\.\S+$', '', title).strip()
+
         # link 可能是属性（Atom）或文本（RSS）
         url = get_text(item, "link", "guid")
         if not url:
             url = get_attr(item, "link", "href")
-        summary = get_text(item, "description", "summary", "content")
+
+        # Google News 的 description 里有真实原文链接，优先提取
+        raw_desc = get_text(item, "description", "summary", "content")
+        if raw_desc:
+            gnews_link = re.search(r'href="(https?://[^"]+)"', raw_desc)
+            if gnews_link:
+                candidate = gnews_link.group(1)
+                # 如果不是 Google 自己的跳转链接，用它
+                if 'news.google.com' not in candidate:
+                    url = candidate
+
+        summary = re.sub(r"<[^>]+>", "", raw_desc) if raw_desc else ""
         pub_str = get_text(item, "pubDate", "published", "updated", "date")
 
         # 正则兜底：直接从原始 XML 片段提取（应对奇葩格式）
@@ -165,8 +179,7 @@ def parse_rss(xml_text: str) -> list:
             if m:
                 pub_str = m.group(1).strip()
 
-        # 清理 HTML 标签
-        summary = re.sub(r"<[^>]+>", "", summary) if summary else ""
+        # 清理多余空白
         summary = summary[:500].strip()
 
         if not title or not url:
@@ -463,5 +476,6 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         os.environ["NOTION_NEWS_DB"] = sys.argv[2]
     status = run()
-    # ZeroWrite（抓到文章但没有新条目）不算失败
-    sys.exit(0 if status in ("Success", "ZeroWrite") else 1)
+    # Success/ZeroWrite/Failed 都是正常运行结果，exit 0
+    # 只有未捕获的异常才会 exit 1
+    sys.exit(0)

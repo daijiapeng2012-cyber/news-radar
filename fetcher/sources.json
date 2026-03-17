@@ -19,7 +19,7 @@
   },
   {
     "name": "The Verge",
-    "rss_url": "https://www.theverge.com/rss/index.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:theverge.com&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.theverge.com",
     "domain": "科技产品/AI",
     "type": "科技媒体",
@@ -136,7 +136,7 @@
   },
   {
     "name": "The Economist",
-    "rss_url": "https://www.economist.com/latest/rss.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:economist.com&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.economist.com",
     "domain": "深度分析",
     "type": "财经媒体",
@@ -145,7 +145,7 @@
   },
   {
     "name": "Financial Times",
-    "rss_url": "https://www.ft.com/rss/home",
+    "rss_url": "https://news.google.com/rss/search?q=site:ft.com&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.ft.com",
     "domain": "金融商业",
     "type": "财经媒体",
@@ -154,7 +154,7 @@
   },
   {
     "name": "Bloomberg Tech",
-    "rss_url": "https://feeds.bloomberg.com/technology/news.rss",
+    "rss_url": "https://news.google.com/rss/search?q=site:bloomberg.com+technology&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.bloomberg.com/technology",
     "domain": "科技/商业",
     "type": "财经媒体",
@@ -163,7 +163,7 @@
   },
   {
     "name": "NYT Technology",
-    "rss_url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:nytimes.com+technology&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.nytimes.com/section/technology",
     "domain": "科技深度报道",
     "type": "主流媒体",
@@ -208,7 +208,7 @@
   },
   {
     "name": "WSJ World News",
-    "rss_url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
+    "rss_url": "https://news.google.com/rss/search?q=site:wsj.com&hl=en-US&gl=US&ceid=US:en",
     "website": "https://www.wsj.com",
     "domain": "全球财经",
     "type": "财经媒体",
@@ -226,7 +226,7 @@
   },
   {
     "name": "联合早报",
-    "rss_url": "https://rsshub.app/zaobao/znews/china",
+    "rss_url": "https://news.google.com/rss/search?q=site:zaobao.com.sg&hl=zh-CN&gl=SG&ceid=SG:zh-Hans",
     "website": "https://www.zaobao.com.sg",
     "domain": "东南亚/中华",
     "type": "报纸",
