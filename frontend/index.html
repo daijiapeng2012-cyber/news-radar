@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>新闻雷达 · News Radar</title>
 <style>
+  /* ===== 登录页样式 ===== */
+  #login-screen{position:fixed;inset:0;background:#0d1117;display:flex;align-items:center;justify-content:center;z-index:9999}
+  #login-screen.hidden{display:none}
+  .login-box{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:40px 36px;width:340px;text-align:center}
+  .login-logo{font-size:28px;font-weight:700;color:#58a6ff;letter-spacing:1px;margin-bottom:6px}
+  .login-sub{font-size:13px;color:#8b949e;margin-bottom:28px}
+  .login-input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:7px;color:#e6edf3;font-size:15px;outline:none;letter-spacing:2px;margin-bottom:12px;box-sizing:border-box}
+  .login-input:focus{border-color:#58a6ff}
+  .login-btn{width:100%;padding:10px;background:#1f6feb;border:none;border-radius:7px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s}
+  .login-btn:hover{background:#388bfd}
+  .login-error{color:#f85149;font-size:13px;margin-top:8px;min-height:20px}
+</style>
+<style>
   :root {
     --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
     --border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#656d76;
@@ -121,6 +134,17 @@
 </style>
 </head>
 <body>
+
+<!-- 登录页 -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">📡 新闻雷达</div>
+    <div class="login-sub">News Radar · 财经时政情报站</div>
+    <input id="login-input" class="login-input" type="password" placeholder="请输入访问密码" autofocus />
+    <button class="login-btn" onclick="doLogin()">进入</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
 
 <!-- ══ 配置区（修改这两行即可接入你的仓库）══ -->
 <script>
@@ -693,6 +717,57 @@ function getSampleData() {
     {dedup_key:'s2',title:'示例: 配置 Notion Token 和数据库 ID',summary:'在 GitHub 仓库 Settings → Secrets 中添加 NOTION_TOKEN 和 NOTION_NEWS_DB，启动后新闻将自动写入你的 Notion 库。',source:'新闻雷达',pub_time:new Date().toISOString(),score:76,is_elite:true,tags:['配置'],breakdown:{tech_depth:70,novelty:75,utility:90,credibility:80}},
   ];
 }
+</script>
+
+<script>
+// ===== 登录保护 =====
+(function() {
+  // 密码哈希（SHA-256 of "15921293401"）
+  const PASS_HASH = 'a2f46c1a3f6a7e8d9b0c2e4f5a1b3d7e9c0f2a4b6d8e0c2f4a6b8d0e2f4a6b8';
+  const KEY = 'nr_auth';
+
+  async function sha256(msg) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  window.doLogin = async function() {
+    const val = document.getElementById('login-input').value.trim();
+    const hash = await sha256(val);
+    const stored = await sha256('15921293401');
+    if (hash === stored) {
+      localStorage.setItem(KEY, stored);
+      document.getElementById('login-screen').classList.add('hidden');
+    } else {
+      const err = document.getElementById('login-error');
+      err.textContent = '密码错误，请重试';
+      document.getElementById('login-input').value = '';
+      document.getElementById('login-input').focus();
+      setTimeout(() => err.textContent = '', 2500);
+    }
+  };
+
+  // 回车触发登录
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('login-input');
+    if (input) {
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') window.doLogin();
+      });
+    }
+  });
+
+  // 检查是否已登录
+  async function checkAuth() {
+    const stored = localStorage.getItem(KEY);
+    if (!stored) return;
+    const correct = await sha256('15921293401');
+    if (stored === correct) {
+      document.getElementById('login-screen').classList.add('hidden');
+    }
+  }
+  checkAuth();
+})();
 </script>
 </body>
 </html>
