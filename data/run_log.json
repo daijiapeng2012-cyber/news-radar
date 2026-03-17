@@ -1,5 +1,18 @@
 [
   {
+    "time": "2026-03-17T19:06:38Z",
+    "status": "Success",
+    "sources_total": 28,
+    "sources_ok": 28,
+    "sources_skip": 0,
+    "sources_fail": 0,
+    "articles_fetched": 1146,
+    "articles_scored": 1146,
+    "writes_created": 10,
+    "writes_updated": 5,
+    "writes_skipped": 0
+  },
+  {
     "time": "2026-03-17T17:06:36Z",
     "status": "Success",
     "sources_total": 28,
