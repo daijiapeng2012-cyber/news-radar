@@ -1,0 +1,79 @@
+name: 新闻雷达 · 定时抓取
+
+on:
+  # 每6小时自动运行
+  schedule:
+    - cron: '0 0,6,12,18 * * *'
+  # 手动触发（调试用）
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: '调试模式（不写入 Notion）'
+        required: false
+        default: 'false'
+
+jobs:
+  fetch-and-score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🚀 Run fetcher
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_NEWS_DB: ${{ secrets.NOTION_NEWS_DB }}
+          DEBUG_MODE: ${{ github.event.inputs.debug }}
+        run: |
+          cd fetcher
+          python main.py
+
+      - name: 📊 Commit updated data
+        run: |
+          git config user.name  "News Radar Bot"
+          git config user.email "bot@news-radar.local"
+          git add data/news.json data/feed_status.json data/run_log.json
+          # 只在有变化时提交
+          git diff --cached --quiet || git commit -m "🤖 Auto: 更新新闻数据 $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+
+  # 每周一触发策略迭代
+  strategy-update:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' && github.event.schedule == '0 0 * * 1'
+    needs: fetch-and-score
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🔄 Run strategy iteration
+        run: |
+          cd fetcher
+          python strategy_updater.py
+
+      - name: 📊 Commit strategy update
+        run: |
+          git config user.name  "News Radar Bot"
+          git config user.email "bot@news-radar.local"
+          git add data/strategy.json data/strategy_changelog.json
+          git diff --cached --quiet || git commit -m "🧠 Auto: 策略迭代 v$(date -u +'%Y%m%d')"
+          git push

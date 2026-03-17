@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新闻雷达 · News Radar</title>
+<style>
+  :root {
+    --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
+    --border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#656d76;
+    --accent:#58a6ff;--accent2:#1f6feb;--green:#3fb950;--orange:#e3b341;
+    --red:#f85149;--sidebar-w:200px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;display:flex;height:100vh;overflow:hidden}
+  .sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+  .sidebar-logo{padding:20px 16px 16px;font-size:18px;font-weight:700;letter-spacing:1px;color:var(--accent);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .sidebar-nav{flex:1;padding:8px 0}
+  .nav-section{padding:16px 16px 4px;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 16px;cursor:pointer;font-size:14px;color:var(--text2);border-left:3px solid transparent;transition:all .15s}
+  .nav-item:hover{background:var(--bg3);color:var(--text)}
+  .nav-item.active{background:var(--bg3);color:var(--accent);border-left-color:var(--accent)}
+  .nav-item .icon{width:18px;text-align:center;font-size:15px}
+  .nav-badge{margin-left:auto;background:var(--accent2);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;font-weight:600}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  .page{display:none;flex-direction:column;height:100%;overflow:hidden}
+  .page.active{display:flex}
+  .topbar{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+  .topbar-left h1{font-size:22px;font-weight:700}
+  .topbar-left p{font-size:13px;color:var(--text2);margin-top:4px}
+  .topbar-actions{display:flex;gap:8px;align-items:center}
+  .btn{padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);transition:all .15s}
+  .btn:hover{background:var(--bg4);color:var(--text)}
+  .btn.primary{background:var(--accent2);border-color:var(--accent2);color:#fff}
+  .btn.primary:hover{background:#388bfd}
+  .btn.active{background:var(--accent2);border-color:var(--accent2);color:#fff}
+  .search-bar{padding:12px 28px;flex-shrink:0;display:flex;gap:8px}
+  .search-input{flex:1;padding:8px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;outline:none}
+  .search-input:focus{border-color:var(--accent)}
+  .search-input::placeholder{color:var(--text3)}
+  .filter-tags{padding:0 28px 10px;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+  .filter-tag{padding:4px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--text2);transition:all .15s}
+  .filter-tag:hover,.filter-tag.active{background:rgba(88,166,255,.1);border-color:var(--accent);color:var(--accent)}
+  .news-list{flex:1;overflow-y:auto;padding:0 28px 20px}
+  .date-group{margin-top:20px}
+  .date-label{font-size:13px;color:var(--text3);margin-bottom:10px;padding-left:2px}
+  .news-item{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;transition:border-color .15s;cursor:pointer}
+  .news-item:hover{border-color:var(--accent)}
+  .news-time{width:52px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;padding-top:14px;font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums}
+  .news-dot{width:8px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;padding-top:18px}
+  .news-dot span{width:6px;height:6px;border-radius:50%;background:var(--green);display:block}
+  .news-content{flex:1;padding:12px 14px}
+  .news-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .news-source{font-size:12px;color:var(--text3)}
+  .tag-elite{font-size:11px;padding:1px 8px;border-radius:4px;background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+  .tag-cat{font-size:11px;padding:1px 8px;border-radius:4px;background:rgba(88,166,255,.1);color:var(--accent);border:1px solid rgba(88,166,255,.2)}
+  .news-title{font-size:15px;font-weight:600;margin-bottom:6px;line-height:1.4;color:var(--text)}
+  .news-summary{font-size:13px;color:var(--text2);line-height:1.6;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  .news-tags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+  .tag-kw{font-size:11px;padding:2px 8px;border-radius:4px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)}
+  .news-actions{width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px 8px;border-left:1px solid var(--border)}
+  .score-badge{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+  .score-high{background:rgba(63,185,80,.2);color:var(--green);border:2px solid var(--green)}
+  .score-mid{background:rgba(227,179,65,.2);color:var(--orange);border:2px solid var(--orange)}
+  .score-low{background:rgba(248,81,73,.2);color:var(--red);border:2px solid var(--red)}
+  .action-btns{display:flex;gap:4px}
+  .action-btn{width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;background:transparent;border:1px solid transparent;color:var(--text3);transition:all .15s}
+  .action-btn:hover{background:var(--bg4);color:var(--text);border-color:var(--border)}
+  .action-btn.liked{color:var(--green)}
+  .action-btn.disliked{color:var(--red)}
+  .action-btn.starred{color:var(--orange)}
+  .strategy-content{flex:1;overflow-y:auto;padding:20px 28px}
+  .strategy-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:18px;margin-bottom:16px}
+  .strategy-card h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text2)}
+  .skill-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;margin-bottom:8px}
+  .skill-icon{font-size:18px;width:28px;text-align:center}
+  .skill-info{flex:1}
+  .skill-name{font-size:13px;font-weight:600}
+  .skill-desc{font-size:12px;color:var(--text3);margin-top:2px}
+  .skill-weight{font-size:12px;font-weight:700;color:var(--accent);background:rgba(88,166,255,.1);padding:2px 8px;border-radius:12px;white-space:nowrap}
+  .feedback-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+  .stat-num{font-size:28px;font-weight:700}
+  .stat-label{font-size:12px;color:var(--text3);margin-top:4px}
+  .diff-view{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:14px;font-size:13px;font-family:'Consolas',monospace;line-height:1.8;max-height:180px;overflow-y:auto;margin-top:12px}
+  .diff-add{color:var(--green)}
+  .diff-del{color:var(--red)}
+  .diff-ctx{color:var(--text3)}
+  .feedback-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;margin-bottom:8px}
+  .console-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:20px;margin-top:16px}
+  .console-log{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px;font-family:'Consolas',monospace;height:120px;overflow-y:auto;color:var(--text2);margin-bottom:12px;display:none}
+  .console-log.visible{display:block}
+  .log-line{margin-bottom:4px}
+  .log-ok{color:var(--green)}
+  .log-info{color:var(--accent)}
+  .log-warn{color:var(--orange)}
+  .btn-iterate{width:100%;padding:12px;background:var(--accent2);border:none;border-radius:6px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn-iterate:hover{background:#388bfd}
+  .btn-iterate:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;width:520px;max-width:95vw;max-height:80vh;overflow-y:auto}
+  .score-breakdown{display:flex;flex-direction:column;gap:10px}
+  .score-row{display:flex;align-items:center;gap:10px}
+  .score-row label{width:100px;font-size:13px;color:var(--text2);flex-shrink:0}
+  .score-bar-wrap{flex:1;background:var(--bg4);border-radius:4px;height:8px;overflow:hidden}
+  .score-bar{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+  .score-val{width:32px;text-align:right;font-size:13px;font-weight:600}
+  .modal-actions{margin-top:20px;display:flex;gap:8px;justify-content:flex-end}
+  .loading-overlay{position:absolute;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:16px}
+  .loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .status-bar{position:fixed;bottom:0;left:var(--sidebar-w);right:0;background:var(--bg2);border-top:1px solid var(--border);padding:6px 28px;font-size:12px;color:var(--text3);display:flex;align-items:center;gap:16px;z-index:10}
+  .status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+  .empty-hint{text-align:center;padding:60px 20px;color:var(--text3);font-size:14px}
+  .config-notice{background:rgba(227,179,65,.1);border:1px solid rgba(227,179,65,.3);border-radius:8px;padding:14px 18px;margin:16px 28px;font-size:13px;color:var(--orange)}
+</style>
+</head>
+<body>
+
+<!-- ══ 配置区（修改这两行即可接入你的仓库）══ -->
+<script>
+  // ⚠️ 部署后修改为你的 GitHub 仓库地址
+  const GITHUB_REPO = "YOUR_GITHUB_USERNAME/news-radar";
+  // Vercel 部署后的域名（用于接收反馈）
+  const API_BASE = window.location.origin;
+  // 数据 URL（GitHub raw 文件）
+  const DATA_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/news.json`;
+  const STRATEGY_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/strategy.json`;
+  const CHANGELOG_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/strategy_changelog.json`;
+  const FEEDBACK_URL = `https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/feedback.json`;
+</script>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo"><span>📡</span> 新闻雷达</div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">主要</div>
+    <div class="nav-item active" onclick="switchPage('news')"><span class="icon">🔥</span> 热点资讯<span class="nav-badge" id="news-count">-</span></div>
+    <div class="nav-item" onclick="switchPage('starred')"><span class="icon">⭐</span> 收藏<span class="nav-badge" id="star-count">0</span></div>
+    <div class="nav-section">策略</div>
+    <div class="nav-item" onclick="switchPage('strategy')"><span class="icon">🎯</span> 精选策略</div>
+    <div class="nav-item" onclick="switchPage('iteration')"><span class="icon">🔄</span> 策略迭代<span class="nav-badge" id="fb-badge">-</span></div>
+    <div class="nav-section">系统</div>
+    <div class="nav-item" onclick="switchPage('runlog')"><span class="icon">📊</span> 运行日志</div>
+  </nav>
+  <div style="padding:12px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);">
+    <div id="last-update">上次更新: 加载中...</div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main" style="position:relative">
+
+  <!-- 加载遮罩 -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div style="color:var(--text2);font-size:14px;">正在加载最新资讯...</div>
+  </div>
+
+  <!-- Page: 热点资讯 -->
+  <div class="page active" id="page-news">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>热点资讯</h1>
+        <p id="news-desc">精选 · AI 自动挑选的高价值内容</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn active" id="btn-elite" onclick="toggleFilter('elite')">精选</button>
+        <button class="btn" id="btn-all" onclick="toggleFilter('all')">全部</button>
+        <button class="btn primary" onclick="loadData()">🔄 刷新</button>
+      </div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" id="search-input" placeholder="搜索标题/摘要..." oninput="renderNews()">
+      <button class="btn primary" onclick="renderNews()">筛选</button>
+    </div>
+    <div class="filter-tags" id="cat-filter">
+      <span class="filter-tag active" onclick="setcat(this,'')">全部</span>
+    </div>
+    <div class="news-list" id="news-list"><div class="empty-hint">加载中...</div></div>
+  </div>
+
+  <!-- Page: 收藏 -->
+  <div class="page" id="page-starred">
+    <div class="topbar"><div class="topbar-left"><h1>收藏</h1><p>你标记了⭐的内容</p></div></div>
+    <div class="news-list" id="starred-list"><div class="empty-hint">暂无收藏</div></div>
+  </div>
+
+  <!-- Page: 精选策略 -->
+  <div class="page" id="page-strategy">
+    <div class="topbar">
+      <div class="topbar-left"><h1>精选策略</h1><p>当前 Skills 权重配置 · 每周根据反馈自动迭代</p></div>
+    </div>
+    <div class="strategy-content" id="strategy-content">
+      <div class="empty-hint">加载中...</div>
+    </div>
+  </div>
+
+  <!-- Page: 策略迭代 -->
+  <div class="page" id="page-iteration">
+    <div class="topbar"><div class="topbar-left"><h1>策略迭代</h1><p>用真实反馈驱动策略更新，每周一自动触发</p></div></div>
+    <div class="strategy-content">
+      <div id="iteration-stats" class="feedback-stats"></div>
+      <div class="strategy-card">
+        <h3 style="margin-bottom:12px;">📋 版本变更记录</h3>
+        <div id="changelog-view" class="diff-view"><div class="diff-ctx">加载中...</div></div>
+      </div>
+      <div class="strategy-card" style="margin-top:0">
+        <h3 style="margin-bottom:12px;">最近反馈 <span id="fb-total" style="background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:1px 8px;font-size:12px;color:var(--text2);">-</span></h3>
+        <div id="feedback-list"></div>
+      </div>
+      <div class="console-card">
+        <h3>迭代控制台</h3>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:10px;">每周一 GitHub Actions 自动迭代；也可手动在 GitHub Actions 页面点击 "Run workflow" 触发</p>
+        <button class="btn-iterate" onclick="openGHActions()">🚀 前往 GitHub Actions 触发迭代</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page: 运行日志 -->
+  <div class="page" id="page-runlog">
+    <div class="topbar"><div class="topbar-left"><h1>运行日志</h1><p>GitHub Actions 每次运行记录</p></div></div>
+    <div class="strategy-content" id="runlog-content"><div class="empty-hint">加载中...</div></div>
+  </div>
+
+</div>
+
+<!-- Modal: 文章详情 -->
+<div class="modal-overlay" id="modal-news" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">关闭</button>
+      <button class="btn" onclick="modalFeedback('dislike')">👎 不感兴趣</button>
+      <button class="btn primary" onclick="modalFeedback('like')">👍 很好，精选</button>
+    </div>
+  </div>
+</div>
+
+<!-- 状态栏 -->
+<div class="status-bar">
+  <span><span class="status-dot"></span>自动运行中</span>
+  <span id="status-articles">-</span>
+  <span id="status-elite">-</span>
+  <span style="margin-left:auto;color:var(--text3);" id="status-repo">
+    仓库: <a href="#" id="repo-link" style="color:var(--accent);text-decoration:none;" target="_blank">配置中...</a>
+  </span>
+</div>
+
+<script>
+// ══ 全局状态 ══
+let NEWS = [];
+let currentFilter = 'elite';
+let currentCat = '';
+let currentNews = null;
+let strategy = null;
+let feedbackData = [];
+const starredKeys = new Set(JSON.parse(localStorage.getItem('starred') || '[]'));
+const feedbackLocal = JSON.parse(localStorage.getItem('feedback_local') || '{}');
+
+// ══ 初始化 ══
+window.addEventListener('load', () => {
+  document.getElementById('repo-link').href = `https://github.com/${GITHUB_REPO}`;
+  document.getElementById('repo-link').textContent = GITHUB_REPO;
+  loadData();
+});
+
+async function loadData() {
+  showLoading(true);
+  try {
+    const [newsRes, stratRes, fbRes] = await Promise.allSettled([
+      fetch(DATA_URL + '?t=' + Date.now()),
+      fetch(STRATEGY_URL + '?t=' + Date.now()),
+      fetch(FEEDBACK_URL + '?t=' + Date.now()),
+    ]);
+
+    if (newsRes.status === 'fulfilled' && newsRes.value.ok) {
+      NEWS = await newsRes.value.json();
+      // 还原本地反馈状态
+      NEWS.forEach(n => {
+        const fb = feedbackLocal[n.dedup_key];
+        if (fb) { n.liked = fb === 'like'; n.disliked = fb === 'dislike'; }
+        n.starred = starredKeys.has(n.dedup_key);
+      });
+    } else {
+      // 没有真实数据时使用示例数据
+      NEWS = getSampleData();
+    }
+
+    if (stratRes.status === 'fulfilled' && stratRes.value.ok) {
+      strategy = await stratRes.value.json();
+    }
+    if (fbRes.status === 'fulfilled' && fbRes.value.ok) {
+      feedbackData = await fbRes.value.json();
+    }
+
+    updateUI();
+  } catch (e) {
+    console.error('加载失败:', e);
+    NEWS = getSampleData();
+    updateUI();
+  } finally {
+    showLoading(false);
+  }
+}
+
+function updateUI() {
+  // 推断分类
+  const cats = new Set();
+  NEWS.forEach(n => (n.tags || []).forEach(t => cats.add(t)));
+  const catBar = document.getElementById('cat-filter');
+  catBar.innerHTML = '<span class="filter-tag active" onclick="setcat(this,\'\')">全部</span>' +
+    [...cats].slice(0, 10).map(c =>
+      `<span class="filter-tag" onclick="setcat(this,'${c}')">${c}</span>`
+    ).join('');
+
+  renderNews();
+  updateStatusBar();
+  if (strategy) renderStrategy();
+  renderIteration();
+}
+
+// ══ 资讯列表 ══
+function getFiltered() {
+  let list = NEWS;
+  if (currentFilter === 'elite') list = list.filter(n => n.is_elite);
+  if (currentCat) list = list.filter(n => (n.tags || []).includes(currentCat));
+  const q = document.getElementById('search-input')?.value.toLowerCase() || '';
+  if (q) list = list.filter(n =>
+    n.title.toLowerCase().includes(q) || (n.summary || '').toLowerCase().includes(q)
+  );
+  return list;
+}
+
+function renderNews() {
+  const list = getFiltered();
+  document.getElementById('news-count').textContent = list.length;
+  document.getElementById('news-desc').textContent =
+    `精选 · AI 自动挑选的高价值内容 · 本页 ${list.length} 条`;
+  const container = document.getElementById('news-list');
+  if (!list.length) { container.innerHTML = '<div class="empty-hint">暂无内容</div>'; return; }
+
+  // 按日期分组
+  const byDate = {};
+  list.forEach(n => {
+    const d = n.pub_time ? new Date(n.pub_time).toLocaleDateString('zh-CN', {month:'long',day:'numeric'}) : '未知日期';
+    if (!byDate[d]) byDate[d] = [];
+    byDate[d].push(n);
+  });
+  container.innerHTML = Object.entries(byDate).map(([date, items]) =>
+    `<div class="date-group"><div class="date-label">${date}</div>${items.map(renderItem).join('')}</div>`
+  ).join('');
+}
+
+function renderItem(n) {
+  const sc = n.score >= 80 ? 'score-high' : n.score >= 65 ? 'score-mid' : 'score-low';
+  const time = n.pub_time ? new Date(n.pub_time).toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'}) : '';
+  return `
+  <div class="news-item" onclick="openNews('${esc(n.dedup_key || '')}')">
+    <div class="news-time">${time}</div>
+    <div class="news-dot"><span></span></div>
+    <div class="news-content">
+      <div class="news-meta">
+        <span class="news-source">${esc(n.source)}</span>
+        ${n.is_elite ? '<span class="tag-elite">精选</span>' : ''}
+        ${(n.tags||[]).slice(0,2).map(t=>`<span class="tag-cat">${esc(t)}</span>`).join('')}
+      </div>
+      <div class="news-title">${n.disliked ? `<span style="opacity:.4">${esc(n.title)}</span>` : esc(n.title)}</div>
+      <div class="news-summary">${esc(n.summary||'')}</div>
+      <div class="news-tags">${(n.tags||[]).map(t=>`<span class="tag-kw">${esc(t)}</span>`).join('')}</div>
+    </div>
+    <div class="news-actions" onclick="event.stopPropagation()">
+      <div class="score-badge ${sc}" title="Skills 综合评分">${n.score||0}</div>
+      <div class="action-btns">
+        <div class="action-btn ${n.liked?'liked':''}" onclick="quickFeedback('${esc(n.dedup_key||'')}','like')">👍</div>
+        <div class="action-btn ${n.disliked?'disliked':''}" onclick="quickFeedback('${esc(n.dedup_key||'')}','dislike')">👎</div>
+        <div class="action-btn ${n.starred?'starred':''}" onclick="toggleStar('${esc(n.dedup_key||'')}')">⭐</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleFilter(f) {
+  currentFilter = f;
+  document.getElementById('btn-elite').classList.toggle('active', f==='elite');
+  document.getElementById('btn-all').classList.toggle('active', f==='all');
+  renderNews();
+}
+
+function setcat(el, cat) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderNews();
+}
+
+// ══ 反馈 ══
+function quickFeedback(key, type) {
+  const n = NEWS.find(x => x.dedup_key === key);
+  if (!n) return;
+  if (type === 'like') { n.liked = !n.liked; n.disliked = false; }
+  else { n.disliked = !n.disliked; n.liked = false; }
+  feedbackLocal[key] = n.liked ? 'like' : n.disliked ? 'dislike' : null;
+  localStorage.setItem('feedback_local', JSON.stringify(feedbackLocal));
+  renderNews();
+  if (n.liked || n.disliked) sendFeedback(n, n.liked ? 'like' : 'dislike', '');
+  showToast(n.liked ? '👍 感谢反馈！' : n.disliked ? '👎 已记录，将优化策略' : '已取消');
+}
+
+function toggleStar(key) {
+  const n = NEWS.find(x => x.dedup_key === key);
+  if (!n) return;
+  n.starred = !n.starred;
+  if (n.starred) starredKeys.add(key); else starredKeys.delete(key);
+  localStorage.setItem('starred', JSON.stringify([...starredKeys]));
+  renderNews();
+  updateStarCount();
+}
+
+function updateStarCount() {
+  document.getElementById('star-count').textContent = NEWS.filter(n => n.starred).length;
+}
+
+async function sendFeedback(article, type, note) {
+  try {
+    await fetch(`${API_BASE}/api/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type, note,
+        title: article.title,
+        source: article.source,
+        breakdown: article.breakdown || {},
+      }),
+    });
+  } catch (e) {
+    // 静默失败，不影响用户体验
+  }
+}
+
+// ══ 文章详情 Modal ══
+function openNews(key) {
+  const n = NEWS.find(x => x.dedup_key === key);
+  if (!n) return;
+  currentNews = n;
+  const sc = n.score >= 80 ? 'score-high' : n.score >= 65 ? 'score-mid' : 'score-low';
+  const bd = n.breakdown || {};
+  const skills = [
+    {icon:'🔬',name:'技术深度',key:'tech_depth',color:'#58a6ff'},
+    {icon:'✨',name:'新颖度',key:'novelty',color:'#bc8cff'},
+    {icon:'🛠️',name:'实用性',key:'utility',color:'#3fb950'},
+    {icon:'🛡️',name:'可信度',key:'credibility',color:'#e3b341'},
+  ];
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+      <h2 style="font-size:16px;font-weight:700;flex:1;padding-right:10px;line-height:1.4">${esc(n.title)}</h2>
+      <div class="score-badge ${sc}" style="flex-shrink:0">${n.score||0}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+      <span style="font-size:12px;color:var(--text3)">${esc(n.source)}</span>
+      ${n.is_elite?'<span class="tag-elite">精选</span>':''}
+      ${n.pub_time?`<span style="font-size:12px;color:var(--text3)">${new Date(n.pub_time).toLocaleString('zh-CN')}</span>`:''}
+    </div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:16px">${esc(n.summary||'')}</p>
+    ${n.url?`<a href="${esc(n.url)}" target="_blank" style="color:var(--accent);font-size:13px;text-decoration:none;">→ 阅读原文</a>`:''}
+    <div style="margin-top:16px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text2)">⚡ Skills 评分详情</div>
+      <div class="score-breakdown">
+        ${skills.map(s => {
+          const v = Math.round(bd[s.key] || 50);
+          return `<div class="score-row">
+            <label>${s.icon} ${s.name}</label>
+            <div class="score-bar-wrap"><div class="score-bar" style="width:${v}%;background:${s.color}"></div></div>
+            <span class="score-val" style="color:${s.color}">${v}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px">💬 反馈备注（可选）</div>
+      <textarea id="modal-note" style="width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;resize:vertical;min-height:60px;outline:none" placeholder="为什么喜欢/不喜欢这条内容..."></textarea>
+    </div>
+  `;
+  document.getElementById('modal-news').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-news').classList.remove('open'); currentNews = null; }
+
+function modalFeedback(type) {
+  if (!currentNews) return;
+  currentNews.liked = type === 'like';
+  currentNews.disliked = type === 'dislike';
+  feedbackLocal[currentNews.dedup_key] = type;
+  localStorage.setItem('feedback_local', JSON.stringify(feedbackLocal));
+  const note = document.getElementById('modal-note')?.value || '';
+  sendFeedback(currentNews, type, note);
+  closeModal();
+  renderNews();
+  showToast(type === 'like' ? '👍 感谢！精选将更准确' : '👎 已记录，策略将优化');
+}
+
+// ══ 收藏页 ══
+function renderStarred() {
+  const list = NEWS.filter(n => n.starred);
+  const el = document.getElementById('starred-list');
+  el.innerHTML = list.length ? list.map(renderItem).join('') : '<div class="empty-hint">暂无收藏</div>';
+}
+
+// ══ 精选策略页 ══
+function renderStrategy() {
+  if (!strategy) return;
+  const w = strategy.weights || {};
+  const skills = [
+    {id:'tech_depth',icon:'🔬',name:'技术深度',desc:'技术关键词密度+内容充实度',color:'#58a6ff'},
+    {id:'novelty',icon:'✨',name:'新颖度',desc:'时效性+首发关键词',color:'#bc8cff'},
+    {id:'utility',icon:'🛠️',name:'实用性',desc:'工具/开源/教程关键词',color:'#3fb950'},
+    {id:'credibility',icon:'🛡️',name:'可信度',desc:'来源评级（A+→高，D→低）',color:'#e3b341'},
+    {id:'ad_penalty',icon:'🚫',name:'广告检测',desc:'营销内容惩罚降权',color:'#f85149'},
+  ];
+  document.getElementById('strategy-content').innerHTML = `
+    <div class="strategy-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0">⚡ 当前评分策略 · v${strategy.version||1}</h3>
+        <span style="font-size:12px;color:var(--text3)">更新: ${strategy.updated_at||'-'} · 基于 ${strategy.feedback_count||0} 条反馈</span>
+      </div>
+      ${skills.map(s => {
+        const pct = Math.abs(Math.round((w[s.id]||0)*100));
+        const neg = s.id === 'ad_penalty';
+        return `<div class="skill-item">
+          <div class="skill-icon">${s.icon}</div>
+          <div class="skill-info"><div class="skill-name">${s.name}</div><div class="skill-desc">${s.desc}</div></div>
+          <div class="skill-weight" style="color:${s.color}">${neg?'-':''}${pct}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="strategy-card">
+      <h3>🧪 在线评分测试</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:10px">粘贴一段新闻摘要，实时看 Skills 打分结果</p>
+      <textarea id="test-input" style="width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;resize:vertical;min-height:80px;outline:none" placeholder="粘贴新闻摘要..."></textarea>
+      <button class="btn primary" style="margin-top:8px;width:100%" onclick="runTest()">▶ 运行评分</button>
+      <div id="test-result"></div>
+    </div>
+  `;
+}
+
+function runTest() {
+  const text = document.getElementById('test-input')?.value || '';
+  if (!text.trim()) return;
+  // 简单本地评分（不依赖后端）
+  const score = Math.min(100, Math.max(20,
+    50 +
+    (text.match(/model|模型|agent|开源|工具|论文|research/gi)||[]).length * 5 +
+    (text.match(/首次|发布|new|launch|release/gi)||[]).length * 4 -
+    (text.match(/赞助|广告|sponsored/gi)||[]).length * 20
+  ));
+  const sc = score >= 80 ? 'score-high' : score >= 65 ? 'score-mid' : 'score-low';
+  document.getElementById('test-result').innerHTML = `
+    <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
+      <div class="score-badge ${sc}">${score}</div>
+      <span style="font-size:13px;color:var(--text2)">${score>=75?'✅ 建议精选':'⚠️ 不建议精选'}</span>
+    </div>
+  `;
+}
+
+// ══ 策略迭代页 ══
+async function renderIteration() {
+  const likes = feedbackData.filter(f=>f.type==='like').length;
+  const dislikes = feedbackData.filter(f=>f.type==='dislike').length;
+  document.getElementById('fb-badge').textContent = feedbackData.length;
+  document.getElementById('fb-total').textContent = feedbackData.length + ' 条';
+  document.getElementById('iteration-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-num" style="color:var(--orange)">${feedbackData.length}</div><div class="stat-label">总反馈</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">${likes}</div><div class="stat-label">赞同</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--red)">${dislikes}</div><div class="stat-label">反对</div></div>
+  `;
+
+  // 加载 changelog
+  try {
+    const res = await fetch(CHANGELOG_URL + '?t=' + Date.now());
+    if (res.ok) {
+      const changelog = await res.json();
+      if (changelog.length) {
+        const latest = changelog[0];
+        const diffLines = (latest.diff||[]).map(d =>
+          `<div class="${d.delta>0?'diff-add':'diff-del'}">${d.delta>0?'+':'-'} ${d.skill}: ${d.old.toFixed(3)} → ${d.new.toFixed(3)}</div>`
+        ).join('');
+        document.getElementById('changelog-view').innerHTML = `
+          <div class="diff-ctx"># 策略 v${latest.version-1} → v${latest.version} (${latest.date})</div>
+          <div class="diff-ctx"># 基于 ${latest.feedback_count} 条反馈生成</div>
+          ${diffLines || '<div class="diff-ctx">（无显著权重变化）</div>'}
+        `;
+      }
+    }
+  } catch(e) { /* 静默 */ }
+
+  // 显示最近反馈
+  const recentFb = [...feedbackData].reverse().slice(0, 8);
+  document.getElementById('feedback-list').innerHTML = recentFb.length
+    ? recentFb.map(f => `
+        <div class="feedback-item">
+          <div style="font-size:16px">${f.type==='like'?'👍':'👎'}</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500">${esc(f.title||'')}</div>
+          ${f.note?`<div style="font-size:12px;color:var(--text2);margin-top:3px;font-style:italic">"${esc(f.note)}"</div>`:''}
+          </div>
+          <div style="font-size:12px;color:var(--text3)">${f.time?new Date(f.time).toLocaleDateString('zh-CN'):''}</div>
+        </div>`
+      ).join('')
+    : '<div class="empty-hint" style="padding:20px">暂无反馈，在资讯列表点击 👍/👎 记录</div>';
+}
+
+// ══ 运行日志 ══
+async function renderRunLog() {
+  try {
+    const res = await fetch(`https://raw.githubusercontent.com/${GITHUB_REPO}/main/data/run_log.json?t=${Date.now()}`);
+    if (!res.ok) throw new Error();
+    const logs = await res.json();
+    document.getElementById('runlog-content').innerHTML = logs.slice(0,20).map(log => `
+      <div class="strategy-card" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:16px">${log.status==='Success'?'✅':log.status==='Partial'?'⚠️':log.status==='ZeroWrite'?'📭':'❌'}</span>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:${log.status==='Success'?'var(--green)':log.status==='Failed'?'var(--red)':'var(--orange)'}">${log.status}</div>
+              <div style="font-size:12px;color:var(--text3)">${log.time?new Date(log.time).toLocaleString('zh-CN'):''}</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text2);text-align:right">
+            新建 ${log.writes_created||0} · 更新 ${log.writes_updated||0}<br>
+            来源 ${log.sources_ok||0}/${log.sources_total||0} 成功
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('runlog-content').innerHTML = '<div class="empty-hint">暂无日志（首次运行后显示）</div>';
+  }
+}
+
+// ══ 辅助函数 ══
+function updateStatusBar() {
+  document.getElementById('status-articles').textContent = `共 ${NEWS.length} 条`;
+  document.getElementById('status-elite').textContent = `精选 ${NEWS.filter(n=>n.is_elite).length} 条`;
+  const latest = NEWS[0]?.pub_time;
+  if (latest) document.getElementById('last-update').textContent = `上次更新: ${new Date(latest).toLocaleString('zh-CN')}`;
+}
+
+function switchPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `switchPage('${name}')`) n.classList.add('active');
+  });
+  if (name === 'starred') renderStarred();
+  if (name === 'runlog') renderRunLog();
+}
+
+function showLoading(show) {
+  const el = document.getElementById('loading-overlay');
+  el.style.display = show ? 'flex' : 'none';
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function openGHActions() {
+  window.open(`https://github.com/${GITHUB_REPO}/actions`, '_blank');
+}
+
+let toastTimer;
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:40px;right:28px;background:#21262d;border:1px solid #30363d;color:#e6edf3;padding:10px 18px;border-radius:8px;font-size:13px;z-index:999;transition:opacity .3s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.style.opacity = '0', 3000);
+}
+
+// 示例数据（仓库未配置时使用）
+function getSampleData() {
+  return [
+    {dedup_key:'s1',title:'示例: 新闻雷达 MVP 已就绪，等待 GitHub 配置',summary:'请按照 README 说明配置 GitHub 仓库，配置完成后这里将显示真实抓取的新闻。',source:'新闻雷达',pub_time:new Date().toISOString(),score:88,is_elite:true,tags:['配置'],breakdown:{tech_depth:80,novelty:90,utility:85,credibility:90}},
+    {dedup_key:'s2',title:'示例: 配置 Notion Token 和数据库 ID',summary:'在 GitHub 仓库 Settings → Secrets 中添加 NOTION_TOKEN 和 NOTION_NEWS_DB，启动后新闻将自动写入你的 Notion 库。',source:'新闻雷达',pub_time:new Date().toISOString(),score:76,is_elite:true,tags:['配置'],breakdown:{tech_depth:70,novelty:75,utility:90,credibility:80}},
+  ];
+}
+</script>
+</body>
+</html>

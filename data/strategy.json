@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-17",
+  "weights": {
+    "tech_depth": 0.35,
+    "novelty": 0.30,
+    "utility": 0.25,
+    "credibility": 0.10,
+    "ad_penalty": -0.15
+  },
+  "feedback_count": 0,
+  "description": "初始策略 v1：均衡权重，适合通用新闻分析"
+}

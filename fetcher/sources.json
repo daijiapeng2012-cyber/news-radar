@@ -1,0 +1,254 @@
+[
+  {
+    "name": "TechCrunch",
+    "rss_url": "https://techcrunch.com/feed/",
+    "website": "https://techcrunch.com",
+    "domain": "创业/AI/融资",
+    "type": "科技媒体",
+    "rating": "A",
+    "region": "美国"
+  },
+  {
+    "name": "BBC News 国际",
+    "rss_url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "website": "https://www.bbc.com/news",
+    "domain": "国际时政",
+    "type": "公共媒体",
+    "rating": "A+",
+    "region": "英国"
+  },
+  {
+    "name": "The Verge",
+    "rss_url": "https://www.theverge.com/rss/index.xml",
+    "website": "https://www.theverge.com",
+    "domain": "科技产品/AI",
+    "type": "科技媒体",
+    "rating": "A",
+    "region": "美国"
+  },
+  {
+    "name": "Wired",
+    "rss_url": "https://www.wired.com/feed/rss",
+    "website": "https://www.wired.com",
+    "domain": "科技/文化",
+    "type": "科技媒体",
+    "rating": "A-",
+    "region": "美国"
+  },
+  {
+    "name": "The Guardian World",
+    "rss_url": "https://www.theguardian.com/world/rss",
+    "website": "https://www.theguardian.com/world",
+    "domain": "国际时政",
+    "type": "主流媒体",
+    "rating": "A",
+    "region": "英国"
+  },
+  {
+    "name": "Ars Technica",
+    "rss_url": "https://feeds.arstechnica.com/arstechnica/index",
+    "website": "https://arstechnica.com",
+    "domain": "深度技术",
+    "type": "科技媒体",
+    "rating": "A",
+    "region": "美国"
+  },
+  {
+    "name": "Hacker News",
+    "rss_url": "https://news.ycombinator.com/rss",
+    "website": "https://news.ycombinator.com",
+    "domain": "科技/开发者",
+    "type": "社区媒体",
+    "rating": "B+",
+    "region": "美国"
+  },
+  {
+    "name": "MIT Technology Review",
+    "rss_url": "https://www.technologyreview.com/topnews.rss",
+    "website": "https://www.technologyreview.com",
+    "domain": "AI/新兴技术",
+    "type": "科技媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "OpenAI News",
+    "rss_url": "https://openai.com/news/rss.xml",
+    "website": "https://openai.com/news",
+    "domain": "OpenAI动态",
+    "type": "官方博客",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "DeepMind Blog",
+    "rss_url": "https://deepmind.google/blog/rss.xml",
+    "website": "https://deepmind.google/discover/blog",
+    "domain": "AI基础研究",
+    "type": "官方博客",
+    "rating": "A+",
+    "region": "英国"
+  },
+  {
+    "name": "Google AI Blog",
+    "rss_url": "https://feeds.feedburner.com/blogspot/gJZg",
+    "website": "https://ai.googleblog.com",
+    "domain": "Google AI研究",
+    "type": "官方博客",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "VentureBeat AI",
+    "rss_url": "https://venturebeat.com/category/ai/feed/",
+    "website": "https://venturebeat.com",
+    "domain": "AI产品/商业",
+    "type": "科技媒体",
+    "rating": "A-",
+    "region": "美国"
+  },
+  {
+    "name": "Reuters World",
+    "rss_url": "https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US&ceid=US:en",
+    "website": "https://www.reuters.com/world",
+    "domain": "国际新闻",
+    "type": "通讯社",
+    "rating": "A+",
+    "region": "英国"
+  },
+  {
+    "name": "AP News",
+    "rss_url": "https://news.google.com/rss/search?q=site:apnews.com&hl=en-US&gl=US&ceid=US:en",
+    "website": "https://apnews.com",
+    "domain": "综合新闻",
+    "type": "通讯社",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "Al Jazeera",
+    "rss_url": "https://www.aljazeera.com/xml/rss/all.xml",
+    "website": "https://www.aljazeera.com",
+    "domain": "国际新闻",
+    "type": "国际媒体",
+    "rating": "A",
+    "region": "卡塔尔"
+  },
+  {
+    "name": "The Economist",
+    "rss_url": "https://www.economist.com/latest/rss.xml",
+    "website": "https://www.economist.com",
+    "domain": "深度分析",
+    "type": "财经媒体",
+    "rating": "A+",
+    "region": "英国"
+  },
+  {
+    "name": "Financial Times",
+    "rss_url": "https://www.ft.com/rss/home",
+    "website": "https://www.ft.com",
+    "domain": "金融商业",
+    "type": "财经媒体",
+    "rating": "A+",
+    "region": "英国"
+  },
+  {
+    "name": "Bloomberg Tech",
+    "rss_url": "https://feeds.bloomberg.com/technology/news.rss",
+    "website": "https://www.bloomberg.com/technology",
+    "domain": "科技/商业",
+    "type": "财经媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "NYT Technology",
+    "rss_url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+    "website": "https://www.nytimes.com/section/technology",
+    "domain": "科技深度报道",
+    "type": "主流媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "InfoQ AI",
+    "rss_url": "https://feed.infoq.com",
+    "website": "https://www.infoq.com",
+    "domain": "AI工程/架构",
+    "type": "技术媒体",
+    "rating": "A-",
+    "region": "美国"
+  },
+  {
+    "name": "IEEE Spectrum",
+    "rss_url": "https://spectrum.ieee.org/feeds/feed.rss",
+    "website": "https://spectrum.ieee.org",
+    "domain": "工程/科技前沿",
+    "type": "学术媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "NPR Technology",
+    "rss_url": "https://feeds.npr.org/1019/rss.xml",
+    "website": "https://www.npr.org/sections/technology",
+    "domain": "科技公共报道",
+    "type": "公共媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "CNBC Economy",
+    "rss_url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+    "website": "https://www.cnbc.com/economy/",
+    "domain": "金融市场",
+    "type": "财经媒体",
+    "rating": "A",
+    "region": "美国"
+  },
+  {
+    "name": "WSJ World News",
+    "rss_url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
+    "website": "https://www.wsj.com",
+    "domain": "全球财经",
+    "type": "财经媒体",
+    "rating": "A+",
+    "region": "美国"
+  },
+  {
+    "name": "The Guardian Tech",
+    "rss_url": "https://www.theguardian.com/technology/rss",
+    "website": "https://www.theguardian.com/technology",
+    "domain": "科技/AI报道",
+    "type": "主流媒体",
+    "rating": "A",
+    "region": "英国"
+  },
+  {
+    "name": "联合早报",
+    "rss_url": "https://rsshub.app/zaobao/znews/china",
+    "website": "https://www.zaobao.com.sg",
+    "domain": "东南亚/中华",
+    "type": "报纸",
+    "rating": "A-",
+    "region": "新加坡"
+  },
+  {
+    "name": "NHK World",
+    "rss_url": "https://news.google.com/rss/search?q=site:nhk.or.jp/nhkworld&hl=en-US&gl=US&ceid=US:en",
+    "website": "https://www3.nhk.or.jp/nhkworld/",
+    "domain": "日本/亚太",
+    "type": "公共媒体",
+    "rating": "A",
+    "region": "日本"
+  },
+  {
+    "name": "MarketWatch",
+    "rss_url": "https://feeds.marketwatch.com/marketwatch/topstories/",
+    "website": "https://www.marketwatch.com",
+    "domain": "财经/市场",
+    "type": "财经媒体",
+    "rating": "B+",
+    "region": "美国"
+  }
+]
