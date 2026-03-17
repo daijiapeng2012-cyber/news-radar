@@ -269,8 +269,6 @@ def build_properties(article: dict, dedup_key: str) -> dict:
         props["摘要"] = {"rich_text": _rt(article["summary"])}
     if article.get("excerpt"):
         props["原文摘录"] = {"rich_text": _rt(article["excerpt"])}
-    if article.get("translation"):
-        props["中文翻译"] = {"rich_text": _rt(article["translation"])}
     if article.get("key_points"):
         props["要点"] = {"rich_text": _rt(article["key_points"])}
     if article.get("tags"):
