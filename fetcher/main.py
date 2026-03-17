@@ -43,6 +43,8 @@ FORCE_WRITE = os.environ.get("FORCE_WRITE", "false").lower() == "true"
 MAX_WRITE = 15
 # 最小写入条数
 MIN_WRITE = 3
+# 写入间隔（秒，避免 Notion API 限速）
+WRITE_INTERVAL = 0.5
 # 文章时效窗口（小时）
 TIME_WINDOW_HOURS = 168  # 7天
 # 连续失败阈值 → 本次跳过
