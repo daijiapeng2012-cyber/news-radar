@@ -229,7 +229,8 @@ def build_properties(article: dict, dedup_key: str) -> dict:
       key_points    str   要点（换行分隔）
       tags          str   自由标签（逗号分隔）
     """
-    title = article.get("title", "(无标题)")
+    # 优先使用中文翻译标题，没有则回退到原标题
+    title = article.get("title_cn") or article.get("title", "(无标题)")
     url = article.get("url", "")
     pub_time = article.get("pub_time", "")
     priority = article.get("priority", "P2")
