@@ -5,9 +5,10 @@
   2. 逐源抓取 RSS，备用 Google News 代理
   3. Skills 评分（scorer.py）
   4. 去重过滤
-  5. 写入 Notion（notion_writer.py）
-  6. 输出 data/news.json（前端读取）
-  7. 写入运行日志
+  5. 翻译精选文章标题+摘要（translator.py，Google 翻译）
+  6. 写入 Notion（notion_writer.py）
+  7. 输出 data/news.json（前端读取）
+  8. 写入运行日志
 """
 import json
 import os
@@ -23,6 +24,7 @@ from xml.etree import ElementTree as ET
 
 from scorer import score_article, load_strategy
 from notion_writer import NotionWriter, make_dedup_key
+from translator import translate_batch
 
 # ──────────────────────────────────────────────
 # 配置
@@ -387,6 +389,12 @@ def run():
 
     # 写入 Notion（只写新文章，上限 MAX_WRITE 条）
     to_write = new_articles[:MAX_WRITE]
+
+    # ── 翻译精选文章（标题 + 摘要前200字） ──
+    if to_write:
+        print(f"\n🌐 翻译 {len(to_write)} 条文章...")
+        translate_batch(to_write, verbose=True)
+
     if writer and to_write and not DEBUG_MODE:
         print(f"\n📝 写入 Notion（{len(to_write)} 条）...")
         for art in to_write:
