@@ -338,15 +338,17 @@ def run():
             tags = infer_tags(art["title"], art["summary"], domain_tag)
 
             result = score_article(
-                title=art["title"],
-                summary=art["summary"],
-                url=art["url"],
-                source_name=name,
-                source_rating=rating,
-                source_type=src_type,
-                tags=tags,
-                pub_hours_ago=art["pub_hours_ago"],
-                weights=strategy_weights,
+                {
+                    "title": art["title"],
+                    "summary": art["summary"],
+                    "url": art["url"],
+                    "source_name": name,
+                    "source_rating": rating,
+                    "source_type": src_type,
+                    "tags": tags,
+                    "pub_hours_ago": art["pub_hours_ago"],
+                },
+                strategy={"weights": strategy_weights} if strategy_weights else None,
             )
 
             enriched = {
@@ -356,9 +358,15 @@ def run():
                 "source_type": src_type,
                 "domain": domain_tag,
                 "tags": tags,
-                "score": result["total"],
-                "is_elite": result["is_elite"],
-                "breakdown": result["breakdown"],
+                "score": result.get("score", 50),
+                "priority": result.get("priority", "P2"),
+                "importance": result.get("importance", ""),
+                "topic": result.get("topic", ""),
+                "sub_topics": result.get("sub_topics", []),
+                "regions": result.get("regions", []),
+                "markets": result.get("markets", []),
+                "is_elite": result.get("score", 50) >= ELITE_THRESHOLD,
+                "breakdown": result.get("breakdown", {}),
                 "dedup_key": dedup_key,
             }
             all_articles.append(enriched)
