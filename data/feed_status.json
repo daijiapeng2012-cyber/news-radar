@@ -1,114 +1,114 @@
 {
   "TechCrunch": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:03Z"
+    "last_ok": "2026-04-15T06:01:15Z"
   },
   "BBC News 国际": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:03Z"
+    "last_ok": "2026-04-15T06:01:15Z"
   },
   "The Verge": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:03Z"
+    "last_ok": "2026-04-15T06:01:15Z"
   },
   "Wired": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:04Z"
+    "last_ok": "2026-04-15T06:01:16Z"
   },
   "The Guardian World": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:04Z"
+    "last_ok": "2026-04-15T06:01:16Z"
   },
   "Ars Technica": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:04Z"
+    "last_ok": "2026-04-15T06:01:16Z"
   },
   "Hacker News": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:04Z"
+    "last_ok": "2026-04-15T06:01:16Z"
   },
   "MIT Technology Review": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:04Z"
+    "last_ok": "2026-04-15T06:01:17Z"
   },
   "OpenAI News": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:05Z"
+    "last_ok": "2026-04-15T06:01:17Z"
   },
   "DeepMind Blog": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:05Z"
+    "last_ok": "2026-04-15T06:01:17Z"
   },
   "Google AI Blog": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:06Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "VentureBeat AI": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:06Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "Reuters World": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:06Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "AP News": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:06Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "Al Jazeera": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:07Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "The Economist": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:07Z"
+    "last_ok": "2026-04-15T06:01:18Z"
   },
   "Financial Times": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:08Z"
+    "last_ok": "2026-04-15T06:01:19Z"
   },
   "Bloomberg Tech": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:08Z"
+    "last_ok": "2026-04-15T06:01:19Z"
   },
   "NYT Technology": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:09Z"
+    "last_ok": "2026-04-15T06:01:20Z"
   },
   "InfoQ AI": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:09Z"
+    "last_ok": "2026-04-15T06:01:20Z"
   },
   "IEEE Spectrum": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:10Z"
+    "last_ok": "2026-04-15T06:01:20Z"
   },
   "NPR Technology": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:11Z"
+    "last_ok": "2026-04-15T06:01:21Z"
   },
   "CNBC Economy": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:11Z"
+    "last_ok": "2026-04-15T06:01:21Z"
   },
   "WSJ World News": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:11Z"
+    "last_ok": "2026-04-15T06:01:22Z"
   },
   "The Guardian Tech": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:11Z"
+    "last_ok": "2026-04-15T06:01:22Z"
   },
   "联合早报": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:12Z"
+    "last_ok": "2026-04-15T06:01:22Z"
   },
   "NHK World": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:12Z"
+    "last_ok": "2026-04-15T06:01:23Z"
   },
   "MarketWatch": {
     "fail_count": 0,
-    "last_ok": "2026-04-15T02:42:13Z"
+    "last_ok": "2026-04-15T06:01:23Z"
   }
 }
