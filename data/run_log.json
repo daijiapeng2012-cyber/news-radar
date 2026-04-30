@@ -1,5 +1,18 @@
 [
   {
+    "time": "2026-04-30T22:55:43Z",
+    "status": "Success",
+    "sources_total": 28,
+    "sources_ok": 28,
+    "sources_skip": 0,
+    "sources_fail": 0,
+    "articles_fetched": 1137,
+    "articles_scored": 1137,
+    "writes_created": 10,
+    "writes_updated": 5,
+    "writes_skipped": 0
+  },
+  {
     "time": "2026-04-30T21:04:26Z",
     "status": "Success",
     "sources_total": 28,
@@ -634,19 +647,6 @@
     "articles_scored": 1204,
     "writes_created": 3,
     "writes_updated": 12,
-    "writes_skipped": 0
-  },
-  {
-    "time": "2026-04-25T08:56:33Z",
-    "status": "Success",
-    "sources_total": 28,
-    "sources_ok": 28,
-    "sources_skip": 0,
-    "sources_fail": 0,
-    "articles_fetched": 1193,
-    "articles_scored": 1193,
-    "writes_created": 1,
-    "writes_updated": 14,
     "writes_skipped": 0
   }
 ]
